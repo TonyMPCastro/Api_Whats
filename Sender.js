@@ -35,50 +35,58 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var Sender_1 = __importDefault(require("./Sender"));
-var express_1 = __importDefault(require("express"));
-var sender = new Sender_1.default();
-var app = (0, express_1.default)(); //inicia o express
-var port = 3000; // porta do serviço
-//busca os parametros do post com json
-app.use(express_1.default.json());
-app.use(express_1.default.urlencoded({ extended: false }));
-//mostra o tempo da aplicação no console
-app.use(function (req, res, next) {
-    console.log('Time:', Date.now());
-    next();
-});
-app.get('/status', function (req, res) {
-    if (sender.isConnected == false) {
-        res.end("<img src='" + sender.qrCode.base64Qr + "'> </img>");
+var venom_bot_1 = require("venom-bot");
+var Sender = /** @class */ (function () {
+    function Sender() {
+        this.initialize();
     }
-});
-app.post('/mensagem', function (req, resp) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, number, message, error_1;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _a = req.body, number = _a.number, message = _a.message;
-                _b.label = 1;
-            case 1:
-                _b.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, sender.sendText2(number, message)];
-            case 2:
-                _b.sent();
-                return [2 /*return*/, resp.status(200).json({ status: "Enviado Com sucesso" })];
-            case 3:
-                error_1 = _b.sent();
-                console.error("error :", error_1);
-                resp.status(500).json({ status: "error", menssage: error_1 });
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
-        }
+    Object.defineProperty(Sender.prototype, "isConnected", {
+        get: function () {
+            return this.Connected;
+        },
+        enumerable: false,
+        configurable: true
     });
-}); });
-app.listen(port, function () {
-    console.log("Server running at http://localhost:" + port + "/");
-});
+    Object.defineProperty(Sender.prototype, "qrCode", {
+        get: function () {
+            return this.qr;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Sender.prototype.sendText2 = function (to, body) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.client.sendText(to, body).then(function (result) {
+                            console.log('Result: ', result); //return object success
+                        })];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    Sender.prototype.initialize = function () {
+        var _this = this;
+        var qr = function (base64Qr) {
+            _this.qr = { base64Qr: base64Qr };
+        };
+        var status = function (statusSession) {
+            _this.Connected = ["isLogged", "qrReadSuccess", "chatsAvailable"].includes(statusSession);
+        };
+        var start = function (client) {
+            _this.client = client;
+            client.onStateChange(function (state) {
+                _this.Connected = state === venom_bot_1.SocketState.CONNECTED;
+            });
+        };
+        (0, venom_bot_1.create)('ws-sender-dev', qr, status)
+            .then(function (client) { return start(client); })
+            .catch(function (error) { return console.error(error); });
+    };
+    return Sender;
+}());
+exports.default = Sender;
