@@ -2,9 +2,11 @@
   "name": "api_zap",
   "version": "1.0.0",
   "description": "",
+  "main": "index.js",
   "scripts": {
-
-    "start": "node index.js"
+    "dev": "nodemon",
+    "build": "rimraf ./build && tsc",
+    "start": "npm run build && node build/app.js"
   },
   "author": "AMPC",
   "license": "ISC",
