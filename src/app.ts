@@ -5,7 +5,7 @@ import express, { Response , Request} from "express"
 const sender = new Sender();
 
 const app = express(); //inicia o express
-const port = 3000;// porta do serviço
+const port = process.env.PORT || 3000;// porta do serviço
 
 //busca os parametros do post com json
 
