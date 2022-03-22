@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var venom_bot_1 = require("venom-bot");
+var venom_bot_1 = require('venom-bot');
 var Sender = /** @class */ (function () {
     function Sender() {
         this.initialize();
@@ -83,7 +83,7 @@ var Sender = /** @class */ (function () {
                 _this.Connected = state === venom_bot_1.SocketState.CONNECTED;
             });
         };
-        (0, venom_bot_1.create)('ws-sender-dev', qr, status)
+         venom_bot_1.create('ws-sender-dev', qr, status)
             .then(function (client) { return start(client); })
             .catch(function (error) { return console.error(error); });
     };
